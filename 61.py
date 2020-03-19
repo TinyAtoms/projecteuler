@@ -11,6 +11,15 @@ then make a directional graph where
 then keep deleting nodes that don't have a predecessor or successor
 in the end, we should end up with a cyclical graph, hopefully
 then plot the graph or print the nodes, idk
+Welp, this is a bust.
+because you can get cycles from tri>square>tri>square for example, and this will contain cycles
+an idea is to name nodes number_(numbertype)
+and then to eliminate cycles with multiple numbertypes
+that was somewhat helpful
+but only like so:
+making it a graph and addint numbertype allowed me to filter out unnneeded nodes
+i then bruteforced it
+the difference between straight bruteforce and not is a 66% increase in speed
 '''
 
 def gen_triangle(n):
@@ -72,110 +81,108 @@ octas = np.array(octas)
 octas = octas[octas < 10000]
 octas = octas[octas > 999]
 octas = octas.astype(np.str)
-# print(triangles, squares, pentas, hexas, heptas, octas, sep="\n\n")
-'''
-
-squares end in 0,1,4,5,6,9
-octas end in 0,1,3,5,6,8
-what if you made a directional graph and then tried to display it to find the longest chain?
-'''
 
 graph = nx.DiGraph()
+
+
+
 for i in triangles:
-    graph.add_edges_from([(i, x) for x in squares if x[:2] == i[2:]]) # front_squares
-    graph.add_edges_from([(x, i) for x in squares if x[2:] == i[:2]]) # back_squares
-    graph.add_edges_from([(i, x) for x in pentas if x[:2] == i[2:]]) # front_pentas
-    graph.add_edges_from([(x, i) for x in pentas if x[2:] == i[:2]]) # back_pentas
-    graph.add_edges_from([(i, x) for x in hexas if x[:2] == i[2:]]) # front_hexas
-    graph.add_edges_from([(x, i) for x in hexas if x[2:] == i[:2]]) # back_hexas
-    graph.add_edges_from([(i, x) for x in heptas if x[:2] == i[2:]]) # front_heptas
-    graph.add_edges_from([(x, i) for x in heptas if x[2:] == i[:2]]) # back_heptas
-    graph.add_edges_from([(i, x) for x in octas if x[:2] == i[2:]]) # front_octas
-    graph.add_edges_from([(x, i) for x in octas if x[2:] == i[:2]]) # back_octas
+    graph.add_edges_from([((i+"tri", x+"squ") ) for x in squares if x[:2] == i[2:]]) # front_squares
+    graph.add_edges_from([((x+"squ", i+"tri") ) for x in squares if x[2:] == i[:2]]) # back_squares
+    graph.add_edges_from([((i+"tri", x+"pen") ) for x in pentas if x[:2] == i[2:]]) # front_pentas
+    graph.add_edges_from([((x+"pen", i+"tri") ) for x in pentas if x[2:] == i[:2]]) # back_pentas
+    graph.add_edges_from([((i+"tri", x+"hex") ) for x in hexas if x[:2] == i[2:]]) # front_hexas
+    graph.add_edges_from([((x+"hex", i+"tri") ) for x in hexas if x[2:] == i[:2]]) # back_hexas
+    graph.add_edges_from([((i+"tri", x+"hep") ) for x in heptas if x[:2] == i[2:]]) # front_heptas
+    graph.add_edges_from([((x+"hep", i+"tri") ) for x in heptas if x[2:] == i[:2]]) # back_heptas
+    graph.add_edges_from([((i+"tri", x+"oct") ) for x in octas if x[:2] == i[2:]]) # front_octas
+    graph.add_edges_from([((x+"oct", i+"tri") ) for x in octas if x[2:] == i[:2]]) # back_octas
 
 for i in squares:
-    graph.add_edges_from([(i, x) for x in triangles if x[:2] == i[2:]]) # front_squares
-    graph.add_edges_from([(x, i) for x in triangles if x[2:] == i[:2]]) # back_squares
-    graph.add_edges_from([(i, x) for x in pentas if x[:2] == i[2:]]) # front_pentas
-    graph.add_edges_from([(x, i) for x in pentas if x[2:] == i[:2]]) # back_pentas
-    graph.add_edges_from([(i, x) for x in hexas if x[:2] == i[2:]]) # front_hexas
-    graph.add_edges_from([(x, i) for x in hexas if x[2:] == i[:2]]) # back_hexas
-    graph.add_edges_from([(i, x) for x in heptas if x[:2] == i[2:]]) # front_heptas
-    graph.add_edges_from([(x, i) for x in heptas if x[2:] == i[:2]]) # back_heptas
-    graph.add_edges_from([(i, x) for x in octas if x[:2] == i[2:]]) # front_octas
-    graph.add_edges_from([(x, i) for x in octas if x[2:] == i[:2]]) # back_octas
+    graph.add_edges_from([((i+"squ", x+"pen") ) for x in pentas if x[:2] == i[2:]]) # front_pentas
+    graph.add_edges_from([((x+"pen", i+"squ") ) for x in pentas if x[2:] == i[:2]]) # back_pentas
+    graph.add_edges_from([((i+"squ", x+"hex") ) for x in hexas if x[:2] == i[2:]]) # front_hexas
+    graph.add_edges_from([((x+"hex", i+"squ") ) for x in hexas if x[2:] == i[:2]]) # back_hexas
+    graph.add_edges_from([((i+"squ", x+"hep") ) for x in heptas if x[:2] == i[2:]]) # front_heptas
+    graph.add_edges_from([((x+"hep", i+"squ") ) for x in heptas if x[2:] == i[:2]]) # back_heptas
+    graph.add_edges_from([((i+"squ", x+"oct") ) for x in octas if x[:2] == i[2:]]) # front_octas
+    graph.add_edges_from([((x+"oct", i+"squ") ) for x in octas if x[2:] == i[:2]]) # back_octas
 
 for i in pentas:
-    graph.add_edges_from([(i, x) for x in triangles if x[:2] == i[2:]]) # front_squares
-    graph.add_edges_from([(x, i) for x in triangles if x[2:] == i[:2]]) # back_squares
-    graph.add_edges_from([(i, x) for x in squares if x[:2] == i[2:]]) # front_pentas
-    graph.add_edges_from([(x, i) for x in squares if x[2:] == i[:2]]) # back_pentas
-    graph.add_edges_from([(i, x) for x in hexas if x[:2] == i[2:]]) # front_hexas
-    graph.add_edges_from([(x, i) for x in hexas if x[2:] == i[:2]]) # back_hexas
-    graph.add_edges_from([(i, x) for x in heptas if x[:2] == i[2:]]) # front_heptas
-    graph.add_edges_from([(x, i) for x in heptas if x[2:] == i[:2]]) # back_heptas
-    graph.add_edges_from([(i, x) for x in octas if x[:2] == i[2:]]) # front_octas
-    graph.add_edges_from([(x, i) for x in octas if x[2:] == i[:2]]) # back_octas
+    graph.add_edges_from([((i+"pen", x+"hex") ) for x in hexas if x[:2] == i[2:]]) # front_hexas
+    graph.add_edges_from([((x+"hex", i+"pen") ) for x in hexas if x[2:] == i[:2]]) # back_hexas
+    graph.add_edges_from([((i+"pen", x+"hep") ) for x in heptas if x[:2] == i[2:]]) # front_heptas
+    graph.add_edges_from([((x+"hep", i+"pen") ) for x in heptas if x[2:] == i[:2]]) # back_heptas
+    graph.add_edges_from([((i+"pen", x+"oct") ) for x in octas if x[:2] == i[2:]]) # front_octas
+    graph.add_edges_from([((x+"oct", i+"pen") ) for x in octas if x[2:] == i[:2]]) # back_octas
 
 for i in hexas:
-    graph.add_edges_from([(i, x) for x in triangles if x[:2] == i[2:]]) # front_squares
-    graph.add_edges_from([(x, i) for x in triangles if x[2:] == i[:2]]) # back_squares
-    graph.add_edges_from([(i, x) for x in squares if x[:2] == i[2:]]) # front_pentas
-    graph.add_edges_from([(x, i) for x in squares if x[2:] == i[:2]]) # back_pentas
-    graph.add_edges_from([(i, x) for x in pentas if x[:2] == i[2:]]) # front_hexas
-    graph.add_edges_from([(x, i) for x in pentas if x[2:] == i[:2]]) # back_hexas
-    graph.add_edges_from([(i, x) for x in heptas if x[:2] == i[2:]]) # front_heptas
-    graph.add_edges_from([(x, i) for x in heptas if x[2:] == i[:2]]) # back_heptas
-    graph.add_edges_from([(i, x) for x in octas if x[:2] == i[2:]]) # front_octas
-    graph.add_edges_from([(x, i) for x in octas if x[2:] == i[:2]]) # back_octas
+    graph.add_edges_from([((i+"hex", x+"hep") ) for x in heptas if x[:2] == i[2:]]) # front_heptas
+    graph.add_edges_from([((x+"hep", i+"hex") ) for x in heptas if x[2:] == i[:2]]) # back_heptas
+    graph.add_edges_from([((i+"hex", x+"oct") ) for x in octas if x[:2] == i[2:]]) # front_octas
+    graph.add_edges_from([((x+"oct", i+"hex") ) for x in octas if x[2:] == i[:2]]) # back_octas
 
 for i in heptas:
-    graph.add_edges_from([(i, x) for x in triangles if x[:2] == i[2:]]) # front_squares
-    graph.add_edges_from([(x, i) for x in triangles if x[2:] == i[:2]]) # back_squares
-    graph.add_edges_from([(i, x) for x in squares if x[:2] == i[2:]]) # front_pentas
-    graph.add_edges_from([(x, i) for x in squares if x[2:] == i[:2]]) # back_pentas
-    graph.add_edges_from([(i, x) for x in pentas if x[:2] == i[2:]]) # front_hexas
-    graph.add_edges_from([(x, i) for x in pentas if x[2:] == i[:2]]) # back_hexas
-    graph.add_edges_from([(i, x) for x in hexas if x[:2] == i[2:]]) # front_heptas
-    graph.add_edges_from([(x, i) for x in hexas if x[2:] == i[:2]]) # back_heptas
-    graph.add_edges_from([(i, x) for x in octas if x[:2] == i[2:]]) # front_octas
-    graph.add_edges_from([(x, i) for x in octas if x[2:] == i[:2]]) # back_octas
-
-for i in octas:
-    graph.add_edges_from([(i, x) for x in triangles if x[:2] == i[2:]]) # front_squares
-    graph.add_edges_from([(x, i) for x in triangles if x[2:] == i[:2]]) # back_squares
-    graph.add_edges_from([(i, x) for x in squares if x[:2] == i[2:]]) # front_pentas
-    graph.add_edges_from([(x, i) for x in squares if x[2:] == i[:2]]) # back_pentas
-    graph.add_edges_from([(i, x) for x in pentas if x[:2] == i[2:]]) # front_hexas
-    graph.add_edges_from([(x, i) for x in pentas if x[2:] == i[:2]]) # back_hexas
-    graph.add_edges_from([(i, x) for x in hexas if x[:2] == i[2:]]) # front_heptas
-    graph.add_edges_from([(x, i) for x in hexas if x[2:] == i[:2]]) # back_heptas
-    graph.add_edges_from([(i, x) for x in heptas if x[:2] == i[2:]]) # front_octas
-    graph.add_edges_from([(x, i) for x in heptas if x[2:] == i[:2]]) # back_octas
+    graph.add_edges_from([(i+"hep", x+"oct") for x in octas if x[:2] == i[2:]]) # front_octas
+    graph.add_edges_from([(x+"oct", i+"hep") for x in octas if x[2:] == i[:2]]) # back_octas
 
 
+old = len(graph.nodes())
 while len(graph.nodes()) > 6:
     remove_nodes = []
     for node in graph.nodes():
-        if not list(graph.successors(node)) or not list(graph.predecessors(node)) or graph.degree(node) < 2:
+        if not list(graph.successors(node)) or not list(graph.predecessors(node)):
             remove_nodes.append(node)
     for n in remove_nodes:
         graph.remove_node(n)
     if not remove_nodes:
         break
-print(len(list(graph.nodes())))
+print(old, "reduced to", len(list(graph.nodes())), "nodes")
 
-# pos=nx.spring_layout(graph)
+numbers = {
+    "tri" : [],
+    "squ" : [],
+    "pen" : [],
+    "hex" : [],
+    "hep" : [],
+    "oct" : []
+}
+for node in graph.nodes():
+    numbers[node[-3:]].append(node[:-3])
 
-cycles = nx.simple_cycles(graph)
-for i in cycles:
-    print(i)
+# numbers = {
+#     "tri" : triangles,
+#     "squ" : squares,
+#     "pen" : pentas,
+#     "hex" : hexas,
+#     "hep" : heptas,
+#     "oct" : octas
+# }
 
-# plt.subplot(121)
-# nx.draw(graph, with_labels=True)
-# plt.subplot(122)
-# # nx.draw_shell(graph, nlist=[range(5, 10), range(5)], with_labels=True, font_weight='bold')
-# plt.show()
-# G = nx.nx_agraph.to_agraph(graph)
-# G.write("miles.dot")
-# G.draw("miles.png",prog='neato')
+
+
+
+from itertools import combinations, permutations
+
+names = ["tri", "squ", "pen", "hex", "hep", "oct"]
+for i in permutations(names, 6):
+    for tri in numbers[i[0]]:
+        for squ in numbers[i[1]]:
+            if tri[2:] != squ[:2]:
+                continue
+            for pen in numbers[i[2]]:
+                if squ[2:] != pen[:2]:
+                    continue
+                for he in numbers[i[3]]:
+                    if pen[2:] != he[:2]:
+                        continue
+                    for hep in numbers[i[4]]:
+                        if he[2:] != hep[:2]:
+                            continue
+                        for oc in numbers[i[5]]:
+                            if hep[2:] != oc[:2]:
+                                continue
+                            if tri[:2] != oc[2:]:
+                                continue
+                            res = [tri, squ, pen, he, hep, oc]
+                            print(res, sum([int(i) for i in res]))
