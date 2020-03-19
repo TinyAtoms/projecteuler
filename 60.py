@@ -1,8 +1,12 @@
 from tools.collections import mil_primes, bil_primes
 from tools.primes import is_prime
 import numpy as np
+'''
+it took 4 mins. idk if it counts
+'''
 
-thousands = mil_primes[mil_primes<20000]
+
+thousands = mil_primes[mil_primes<10000]
 thousands = thousands.astype(str)
 
 
@@ -42,6 +46,7 @@ for i in thousands:
             if is_prime(int(i + p[2])) and is_prime(int(p[2] + i)) and i not in p and is_prime(int(i + p[3])) and is_prime(int(p[3] + i)):
                 pentas.append((p[0], p[1], p[2], p[3], i))
 
-print(pentas)
-a = sorted(pentas, key=sum)
-print(a)
+
+answer = [[int(i) for i in b] for b in pentas]
+answer = sorted(answer, key=sum)
+print(sum(answer[0]), answer[0])

@@ -4,6 +4,7 @@ from tools import primes
 from tools import words
 from tools import math
 from tools import encryption
+from tools import itertools
 
 from tools import benchmark
 
