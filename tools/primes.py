@@ -4,7 +4,7 @@ from math import sqrt, ceil
 import numpy as np
 import random
 from tools.collections import mil_primes_dict, mil_primes, bil_primes
-
+from functools import lru_cache
 
 
 
@@ -109,7 +109,7 @@ def _try_composite(a, d, n, s):
             return False
     return True  # n  is definitely composite
 
-
+@lru_cache
 def is_prime(n, _precision_for_huge_n=16):
     if n in _known_primes:
         return True
@@ -140,6 +140,7 @@ def is_prime(n, _precision_for_huge_n=16):
 
 _known_primes = [2, 3]
 _known_primes += [x for x in range(5, 1000, 2) if is_prime(x)]
+# _known_primes = list(mil_primes)
 
 
 def factors_of(n):

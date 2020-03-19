@@ -1,5 +1,6 @@
 from tools.collections import mil_primes
 import networkx as nx
+import matplotlib.pyplot as plt
 
 def hamming_distance(a,b):
     a = str(a)
@@ -36,4 +37,10 @@ for i in hundreds:
     for j in hundreds:
         distance = modified_hamming(i,j)
         if distance:
-            graph.add_edge(i,j, distance)
+            graph.add_edge(i,j, weight=distance)
+
+# nx.draw(graph)
+# plt.show()
+for i in hundreds:
+    print(graph[i])
+    break
