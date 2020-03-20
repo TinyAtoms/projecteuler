@@ -35,6 +35,10 @@ IDeas:
     |- this definitely isn't a problem solved with bruteforce, seeing as the answer for 61 > 1000000000
     |- the math looks a whole lot of nonfun
     |- wikipedia told me the answer was 1069
+If i ever want to implement it:
+http://mathafou.free.fr/exe_en/exepqa.html?vald=7
+http://www.numbertheory.org/php/main_pell.html
+https://thilinaatsympy.wordpress.com/2013/07/06/solving-the-generalized-pell-equation/
 
 """
 # def gen_xy(d, last, limit=10000000000):
