@@ -1,11 +1,12 @@
 import itertools
 from itertools import chain, cycle, accumulate  # last of which is Python 3 only
 from math import sqrt, ceil
-import numpy as np
 import random
+
+import numpy as np
+
 from tools.collections import mil_primes_dict, mil_primes, bil_primes
 from functools import lru_cache
-
 
 
 
@@ -109,6 +110,7 @@ def _try_composite(a, d, n, s):
             return False
     return True  # n  is definitely composite
 
+
 @lru_cache
 def is_prime(n, _precision_for_huge_n=16):
     if n in _known_primes:
@@ -143,6 +145,7 @@ _known_primes += [x for x in range(5, 1000, 2) if is_prime(x)]
 # _known_primes = list(mil_primes)
 
 
+@lru_cache
 def factors_of(n):
     def prime_powers(n):
         # c goes through 2, 3, 5, then the infinite (6n+1, 6n+5) series
@@ -164,9 +167,16 @@ def factors_of(n):
     return r
 
 
+from math import floor, sqrt
+
+
+
 def prime_factors_of(n):
-    factors = factors_of(n)
-    prime_factors = [i for i in factors if i in mil_primes_dict]
-    return prime_factors
-
-
+    step = lambda x: 1 + (x<<2) - ((x>>1)<<1)
+    maxq = int(floor(sqrt(n)))
+    d = 1
+    q = 2 if n % 2 == 0 else 3 
+    while q <= maxq and n % q != 0:
+        q = step(d)
+        d += 1
+    return [q] + prime_factors_of(n // q) if q <= maxq else [n]
